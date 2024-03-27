@@ -1,0 +1,32 @@
+{% extends  "base.html" %}{% block title %}My Videos {% endblock %}
+
+{% block content %}
+
+<div class="video-upload-form">
+    <form method="POST" action="{{ url_for('views.upload_video') }}">
+      <div class="form-group">
+        <label for="videoUrl">Enter YouTube URL:</label>
+        <input type="text" class="form-control" id="videoUrl" name="video_url" required>
+      </div>
+      <div class="form-group">
+        <label for="videoTitle">Enter Title:</label>
+        <input type="text" class="form-control" id="videoTitle" name="video_title" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+  </div>
+  
+  <!-- Videos list -->
+  <div class="videos-list">
+    {% for video in videos %}
+    <div class="video-item">
+      <h4>{{ video.title }}</h4>
+      <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ video.yt_video_id }}" allowfullscreen></iframe>
+      </div>
+      <button type="button" class="btn btn-danger" onclick="deleteVideo('{{ video.id }}')">Delete</button>
+    </div>
+    {% endfor %}
+  </div>
+
+{% endblock %}

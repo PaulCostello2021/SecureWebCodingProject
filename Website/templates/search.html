@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<br>
+<br>
+<form action="{{ url_for('views.search') }}" method="post">
+    <input type="text" name="search" placeholder="Enter search term..." required>
+    <button type="submit">Search</button>
+</form>
+<br>
+<h2>Search Results</h2>
+<br>
+{% if search_query %}
+    <p>Results for "{{ search_query }}":</p>
+    <div>
+        <h3>Notes Database Results</h3>
+        {% for note in results['notes'] %}
+            <div>{{ note.data }}</div>
+        {% endfor %}
+    </div>
+    <br>
+    <div>
+        <h3>Jokes Database Results</h3>
+        {% for joke in results['jokes'] %}
+            <div>{{ joke.data }}</div>
+        {% endfor %}
+    </div>
+    <br>
+    <div>
+        <h3>Memes Database Results</h3>
+        {% for meme in results['memes'] %}
+            <img src="{{ url_for('static', filename=meme.image_path.replace('\\','/' )) }}" alt="Meme">
+        {% endfor %}
+
+
+
+    </div>
+    <br>
+    <div>
+        <h3>Videos Database Results</h3>
+        {% for video in results['videos'] %}
+            <div>{{ video.title }}</div>
+        {% endfor %}
+    </div>
+    <br>
+    <div>
+        <h3>Users Database Results</h3>
+        {% for user in results['users'] %}
+            <div>{{ user.first_name }}</div>
+        {% endfor %}
+    </div>
+    
+{% else %}
+    <p>No search query was provided.</p>
+{% endif %}
+{% endblock %}

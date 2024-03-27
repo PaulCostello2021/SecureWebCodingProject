@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block title %}My Memes{% endblock %}
+
+
+{% block content %}
+
+
+
+
+<form method="POST" action="{{ url_for('views.memes') }}" enctype="multipart/form-data">
+    <input type="file" name="meme_image" accept="image/*">
+    <button type="submit">Upload Meme</button>
+
+  
+
+
+</form>
+
+<!--This piece of code creates a delete button to delet the memes-->
+{% for meme in memes %}
+<div class="meme-container" id="meme-{{ meme.id }}">
+  <img src="{{ url_for('static', filename=meme.image_path.replace('\\','/' )  ) }}" alt="Meme" class="meme-image" />
+  <button onclick="deleteMeme({{ meme.id }})" class="delete-button">&times;</button>
+</div>
+
+{% endfor %}
+
+{% endblock %}
+
+

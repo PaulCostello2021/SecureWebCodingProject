@@ -1,0 +1,31 @@
+{% extends  "base.html" %}{% block title %}My Jokes {% endblock %}
+
+{% block content %}
+
+<h1 align="center">My Jokes</h1>
+
+<ul class="list-group list-group-flush" id="jokes" >
+    {% for jokes in user.jokes %}
+
+    <li class="list-group-item">{{ jokes.data }}
+
+        <button type="button" class="close" onclick="deleteJoke({{ jokes.id }})">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        
+    </li>
+
+  {% endfor %}
+</ul>
+
+
+<form method="POST">
+    <textarea name="jokes" id="jokes" cols="30" rows="10" class="form-control"></textarea>
+</br>
+    <div align = center>
+        <button type="submit" class="btn btn-primary">Add Joke</button>
+    </div>
+</form>
+
+
+{% endblock %}

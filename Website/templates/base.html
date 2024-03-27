@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      crossorigin="anonymous"
+    />
+
+    <title>{% block title %}Home{% endblock %}</title>
+
+    <style>
+      .meme-container {
+        position: relative;
+        display: inline-block; /* or 'block' depending on your layout */
+      }
+      
+      .meme-image {
+        width: 400px; /* or 100% to fill the container */
+        height: 400px;
+      }
+      
+      .delete-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: transparent; /* Adjust color as needed */
+        color: #0e0909; /* Adjust X button color as needed */
+        border: none;
+        cursor: pointer;
+        font-size: 24px; /* Adjust the size as needed */
+        padding: 0 5px;
+      }
+      </style>
+
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar">
+        <div class="navbar-nav">
+          {% if user.is_authenticated %}
+          <a class="nav-item nav-link" id="home" href="/">My Notes</a>
+          <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+          <a class="nav-item nav-link" id="about" href="/about">About Me</a>
+          <a class="nav-item nav-link" id="jokes" href="/jokes">My Jokes</a>
+          <a class="nav-item nav-link" id="videos" href="/videos">My Videos</a>
+          <a class="nav-item nav-link" id="memes" href="/memes">My Memes</a>
+          <a class="nav-item nav-link" id="search" href="/search">Search</a>
+          
+
+          {% else %}
+          <a class="nav-item nav-link" id="login" href="/login">Login</a>
+          <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+    <!--This section displays an error message if the user enters unacceptable data. --> 
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'error' %}
+    <div class="alert alert-danger alter-dismissable fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alter-dismissable fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+<!--This section displays an error message if the user enters unacceptable data. --> 
+
+
+    <div class="container">{% block content %} {% endblock %}</div>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
+{% block javascript %}
+    <script type="text/javascript">
+      function deleteNote(noteId) {
+  fetch("/delete-note", {
+    method: "POST",
+    body: JSON.stringify({ noteId: noteId }),
+  }).then((_res) => {
+    window.location.href = "/";
+  });
+  }
+
+  function deleteJoke(jokeId) {
+    fetch('/delete-jokes', {
+        method: 'POST',
+        body: JSON.stringify({ jokeId: jokeId }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            window.location.reload(); // Reload the page to update the list of jokes
+        }
+    }).catch(error => console.error('Error:', error));
+}
+
+
+function deleteMeme(memeId) {
+  fetch('/delete-meme', {
+      method: 'POST',
+      body: JSON.stringify({ memeId: memeId }),
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  }).then(response => {
+      if (response.ok) {
+          document.getElementById('meme-' + memeId).remove(); // Removes the meme element from the page
+      }
+  }).catch(error => console.error('Error:', error));
+}
+
+
+
+function deleteVideo(videoId) {
+  fetch("/delete-video", {
+    method: "POST",
+    body: JSON.stringify({ videoId: videoId }),
+    headers: {
+        'Content-Type': 'application/json'
+    }
+  }).then(response => {
+    if (response.ok) {
+      // Remove the video element from the page
+      document.querySelector('.video-item[data-id="' + videoId + '"]').remove();
+    }
+  }).catch(error => console.error('Error:', error));
+}
+
+function getYouTubeVideoID(url) {
+  var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  var match = url.match(regExp);
+  if (match && match[2].length == 11) {
+    return match[2];
+  } else {
+    return null;
+  }
+}
+
+
+function deleteVideo(videoId) {
+  fetch("/delete-video", {
+    method: "POST",
+    body: JSON.stringify({ videoId: videoId }),
+    headers: {
+        'Content-Type': 'application/json'
+    }
+  }).then(response => {
+    if (response.ok) {
+      // The video was successfully deleted, now reload the page
+      window.location.reload();
+    } else {
+      // Handle the error, maybe show a message to the user
+      console.error('Failed to delete the video.');
+    }
+  }).catch(error => {
+    // Handle any other errors
+    console.error('Error:', error);
+  });
+}
+
+
+
+
+</script>
+{% endblock %}
+  </body>
+</html>
